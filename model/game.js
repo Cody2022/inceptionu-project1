@@ -3,10 +3,13 @@ const fetch=require('node-fetch');
 
 const {createCity,
        findCityByName,
+       deleteByName,
+       findAll,
+       updateTempByName
         }=require('../db/gameModel');
 
 
-const currentWeatherCity=(req, res)=>{
+const weatherOfCity=(req, res)=>{
     let city = req.query.city;
     console.log(city);
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${APIkey_weather}`)
@@ -162,20 +165,39 @@ const startGame=(req, res)=>{
 // //-------
 const addCity=async(city)=>{
     let newCity=await createCity({name:city});
-    console.log(newCity);
+    console.log("newCity:", newCity);
     return newCity;
 }
 
-const findCityName=async(cityName)=>{
+const findCity=async(cityName)=>{
     let city=await findCityByName({name: cityName});
     return city;
 }
+const deleteCity=async(cityName)=>{
+    let city=await deleteByName({name: cityName});
+    console.log("city:", city)
+    return city;
+}
 
-module.exports={currentWeatherCity, 
+const findAllCities=async()=>{
+    let cityArray=await findAll();
+    return cityArray;
+}
+
+const updateCityTemperature=async(name, newTemperature)=>{
+    let cityUpdatedT=await updateTempByName({name:name}, {temperature:newTemperature});
+    console.log("cityUpdatedT", cityUpdatedT)
+    return cityUpdatedT;
+}
+
+module.exports={weatherOfCity, 
                 geoLocation, 
                 localWeather, 
                 forecastDailyWeatherCity, 
                 startGame,
                 addCity,
-                findCityName
+                findCity,
+                deleteCity, 
+                findAllCities,
+                updateCityTemperature  
             };

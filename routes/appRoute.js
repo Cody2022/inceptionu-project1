@@ -1,10 +1,11 @@
 const express=require('express');
-const checkRouter=express.Router();
-module.exports = checkRouter;
+const appRouter=express.Router();
+module.exports = appRouter;
 
-const {currentWeatherCity, localWeather, geoLocation}=require('../model/game')
+const {weatherOfCity, localWeather, geoLocation}=require('../model/game')
 
-checkRouter.get("/weather", localWeather);
+appRouter.get("/weather", localWeather);
 
-checkRouter.get("/geoip", geoLocation);
+appRouter.get("/geoip", geoLocation);
 
+appRouter.get("/q", weatherOfCity); 

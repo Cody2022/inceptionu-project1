@@ -2,20 +2,58 @@ const express=require('express');
 const gameRouter=express.Router();
 module.exports = gameRouter;
 
-const {currentWeatherCity, localWeather, geoLocation, startGame, addCity}=require('../model/game')
+const {weatherOfCity, 
+        localWeather, 
+        geoLocation, 
+        startGame, 
+        addCity, 
+        findCity, 
+        deleteCity,
+        findAllCities,
+        updateCityTemperature}=require('../model/game')
 
 
 gameRouter.get("/startgame", startGame);   //city = req.query.city
 
-gameRouter.get("/guess", currentWeatherCity);   //city = req.query.city
+gameRouter.get("/guess", weatherOfCity);   //city = req.query.city
 
-gameRouter.get("/add/:city", async (req, res)=>{
-    let city=req.params.city;
+
+gameRouter.get("/add", async (req, res)=>{
+    let city=req.query.city;
     console.log("get-add City", city)
-    let addCityMessage=await addCity(city);
+    let addCityMessage=await addCity(city)
     console.log("Message:",addCityMessage)
     res.send(`Add ${city} to database`);
-});   //city = req.query.city
+}); 
 
-// let findCity=await findCityName(city);
-// if (findCity){return (`${city} is already in the city database`)}
+gameRouter.get('/find', async(req, res)=>{
+    let city=req.query.city;
+    let cityFound=await findCity(city);
+    console.log("/find cityFound:",cityFound)
+    if (cityFound===false){res.send(`${city} is not in the database`)}
+    else{res.send(cityFound)}
+})
+
+gameRouter.get('/delete', async(req, res)=>{
+    let city=req.query.city;
+    let cityFound=await deleteCity(city);
+    console.log("get-/delete cityFound:", cityFound)
+    if (cityFound.deletedCount===0){res.send(`${city} is not in the database`)}
+    else{res.send(`${city} is deleted from the database.`)}
+})
+
+gameRouter.get('/findall', async (req,res)=>{
+    let cityArray=await findAllCities();
+    console.log("cityArray:",cityArray)
+    res.send(cityArray)
+})
+
+gameRouter.get('/update', async(req, res)=>{
+    let city=req.query.city;
+    let temperature=Number(req.query.temperature);
+    console.log(temperature)
+    let cityWithNewT=await updateCityTemperature(city, temperature);
+    console.log("cityWithNewT",cityWithNewT)
+    if (cityWithNewT===null){res.send(`Cannot update, ${city} is not in the database`)}
+    else{res.send(cityWithNewT)};
+})

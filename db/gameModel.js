@@ -1,15 +1,14 @@
-const res = require("express/lib/response");
 const mongoose=require("./mongoose");
 
 
 const citySchema=new mongoose.Schema({
     name:{
         type: String,
-        min: 3,
+        minLength: 3,
         required: true,
         unique: true
     },
-    temp:{
+    temperature:{
         type: Number,
         default:0,
     },
@@ -23,20 +22,33 @@ const citySet=mongoose.model("citySet", citySchema);
 
 const createCity=async (newCityName)=>{
     let result= await citySet.create(newCityName, error=>{
-        if(error){
-            console.log(error.message)
-            return;}
-    }); // return result;
+        if(error) {console.log("error @createcity:", error)}
+    })   
+    return result; 
 }
 
 const findCityByName=async (cityToFind)=>{
-    let cityFound=await citySet.findOne(cityToFind, error=>{
-        // res.send(`${cityFound.name} cannot be found!`)
-        console.log(`${cityFound}`)
-    });
-    return cityFound;
+    let cityFound=await citySet.findOne(cityToFind)
+    console.log("cityFound return value:", cityFound);
+    if (!cityFound){console.log("cannot find"); return false}
+    else {return cityFound;}
 }
 
+const deleteByName=async(cityToDelete)=>{
+    let cityDeleted=await citySet.deleteOne(cityToDelete);
+    console.log("city to be deleted:", cityDeleted)
+    return cityDeleted;
+}
 
+const findAll=async ()=>{
+    let cityArray=await citySet.find()
+    return cityArray;
+}
 
-module.exports={createCity};
+const updateTempByName=async(city, cityNewtemperature)=>{
+    let cityUpdated=await citySet.findOneAndUpdate(city, cityNewtemperature,{new:true});
+    console.log("cityUpdated", cityUpdated)
+    return cityUpdated;
+}
+
+module.exports={createCity, findCityByName, deleteByName, findAll, updateTempByName};
