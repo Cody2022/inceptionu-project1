@@ -12,6 +12,14 @@ const citySchema=new mongoose.Schema({
         type: Number,
         default:0,
     },
+    guessTemp:{
+        type: Number,
+        default:-1000,
+    },
+    score:{
+        type: Number,
+        default:0,
+    },
     createdAt:{
         type: Date,
         default: new Date()

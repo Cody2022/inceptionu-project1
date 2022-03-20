@@ -1,5 +1,8 @@
 const {APIkey_weather}=require('../API-key');
 const fetch=require('node-fetch');
+const readlineAsync=require('readline-async');
+const readlineSync=require('readline-sync');
+
 
 const {createCity,
        findCityByName,
@@ -190,6 +193,79 @@ const updateCityTemperature=async(name, newTemperature)=>{
     return cityUpdatedT;
 }
 
+// -----------2022.03.19
+const initialize=async ()=>{
+    let cityArray=await findAll();
+
+    for (city of cityArray){
+        let response= await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city.name}&units=metric&appid=${APIkey_weather}`);
+        let weatherJson=await response.json();
+        if (weatherJson.message) {console.log("error init:", weatherJson.message)}
+        else{
+            console.log("WeaterhJson results:",weatherJson)
+            let cityUpdatedT=await updateTempByName({name:city.name}, {temperature:weatherJson.main.temp});
+            console.log("cityUpdatedT", cityUpdatedT)
+        }
+    }
+}
+
+// -----
+const start=async(accuracy)=>{
+    let cityArray=await findAll();
+    let scores={right: 0};
+    let guessRight=[];
+    let summary=[];
+
+    // const inputAsync=async()=>{
+    //     let input=await readlineAsync();
+    //         return input;
+    //    }
+
+    for (city of cityArray) {
+        let intialScore=await updateTempByName({name:city.name}, {score:0});
+    }
+
+    for (city of cityArray){
+        let response= await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city.name}&units=metric&appid=${APIkey_weather}`);
+        let weatherJson=await response.json();
+
+        if (weatherJson.message) {console.log("error init:", weatherJson.message)}
+        else{
+            // console.log("WeaterhJson results:",weatherJson)
+            let cityUpdatedT=await updateTempByName({name:city.name}, {temperature:weatherJson.main.temp});
+            // console.log("cityUpdatedT", cityUpdatedT)
+
+            console.log(`Guess and Enter temperature of ${city.name}:`)
+            let cityTemp=await readlineAsync();
+            console.log("cityTemp",cityTemp)
+
+                    
+        }
+            
+       
+        // let cityTemp=await inputAsync();
+        // console.log("cityTemp",cityTemp)
+// }
+
+    }    
+    //  let cityTemp=await readlineAsync();
+    //         console.log("cityTemp",cityTemp)
+    // let UpdatedT=await updateTempByName({name:city.name}, {guessTemp:Number(cityTemp)});
+
+ 
+
+    //     let cityCompared=await findCityByName({name: city.name});
+    //     if (Math.abs(cityCompared.temperature-cityCompared.guessTemp)<=accuracy){
+    //         let UpdatedScore=await updateTempByName({name:city.name}, {score:1});
+    //         guessRight.push({name:cityCompared.name,actualT:cityCompared.temperature, guessT: cityCompared.guessTemp, deltaT: (cityCompared.temperature-cityCompared.guessTemp)})
+    //     }
+    // }   
+    // return summary.concat(scores,guessRight)
+        return summary
+}
+
+
+
 module.exports={weatherOfCity, 
                 geoLocation, 
                 localWeather, 
@@ -199,5 +275,7 @@ module.exports={weatherOfCity,
                 findCity,
                 deleteCity, 
                 findAllCities,
-                updateCityTemperature  
+                updateCityTemperature,
+                initialize,
+                start  
             };

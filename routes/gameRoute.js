@@ -10,7 +10,9 @@ const {weatherOfCity,
         findCity, 
         deleteCity,
         findAllCities,
-        updateCityTemperature}=require('../model/game')
+        updateCityTemperature,
+        initialize,
+        start}=require('../model/game')
 
 
 gameRouter.get("/startgame", startGame);   //city = req.query.city
@@ -42,10 +44,14 @@ gameRouter.get('/delete', async(req, res)=>{
     else{res.send(`${city} is deleted from the database.`)}
 })
 
-gameRouter.get('/findall', async (req,res)=>{
+gameRouter.get('/findcities', async (req,res)=>{
     let cityArray=await findAllCities();
     console.log("cityArray:",cityArray)
-    res.send(cityArray)
+    let cities=[];
+    for (city of cityArray){
+        cities.push(city.name)
+    }
+    res.send(cities)
 })
 
 gameRouter.get('/update', async(req, res)=>{
@@ -56,4 +62,13 @@ gameRouter.get('/update', async(req, res)=>{
     console.log("cityWithNewT",cityWithNewT)
     if (cityWithNewT===null){res.send(`Cannot update, ${city} is not in the database`)}
     else{res.send(cityWithNewT)};
+})
+
+gameRouter.get('/init', initialize);
+
+gameRouter.get('/start', async(req,res)=>{
+    let accuracy=Number(req.query.accuracy);
+    let results=await start(accuracy);
+    console.log("Your game results: ", results);
+    res.send(results);
 })
