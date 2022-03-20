@@ -168,7 +168,7 @@ const startGame=(req, res)=>{
 // //-------
 const addCity=async(city)=>{
     let newCity=await createCity({name:city});
-    console.log("newCity:", newCity);
+    // console.log("newCity:", newCity);
     return newCity;
 }
 
@@ -178,7 +178,7 @@ const findCity=async(cityName)=>{
 }
 const deleteCity=async(cityName)=>{
     let city=await deleteByName({name: cityName});
-    console.log("city:", city)
+    // console.log("city:", city)
     return city;
 }
 
@@ -189,7 +189,7 @@ const findAllCities=async()=>{
 
 const updateCityTemperature=async(name, newTemperature)=>{
     let cityUpdatedT=await updateTempByName({name:name}, {temperature:newTemperature});
-    console.log("cityUpdatedT", cityUpdatedT)
+    // console.log("cityUpdatedT", cityUpdatedT)
     return cityUpdatedT;
 }
 
@@ -202,9 +202,9 @@ const initialize=async ()=>{
         let weatherJson=await response.json();
         if (weatherJson.message) {console.log("error init:", weatherJson.message)}
         else{
-            console.log("WeaterhJson results:",weatherJson)
+            // console.log("WeaterhJson results:",weatherJson)
             let cityUpdatedT=await updateTempByName({name:city.name}, {temperature:weatherJson.main.temp});
-            console.log("cityUpdatedT", cityUpdatedT)
+            // console.log("cityUpdatedT", cityUpdatedT)
         }
     }
 }
@@ -212,17 +212,13 @@ const initialize=async ()=>{
 // -----
 const start=async(accuracy)=>{
     let cityArray=await findAll();
-    let scores={right: 0};
+    let scores=0;
     let guessRight=[];
     let summary=[];
 
-    // const inputAsync=async()=>{
-    //     let input=await readlineAsync();
-    //         return input;
-    //    }
-
     for (city of cityArray) {
         let intialScore=await updateTempByName({name:city.name}, {score:0});
+        let intialGuessTemp=await updateTempByName({name:city.name}, {guessTemp:-1000});
     }
 
     for (city of cityArray){
@@ -231,39 +227,21 @@ const start=async(accuracy)=>{
 
         if (weatherJson.message) {console.log("error init:", weatherJson.message)}
         else{
-            // console.log("WeaterhJson results:",weatherJson)
             let cityUpdatedT=await updateTempByName({name:city.name}, {temperature:weatherJson.main.temp});
-            // console.log("cityUpdatedT", cityUpdatedT)
-
-            console.log(`Guess and Enter temperature of ${city.name}:`)
+           
+            console.log(`Guess and Enter temperature of ${city.name}:`)    //Assited information for input
             let cityTemp=await readlineAsync();
-            console.log("cityTemp",cityTemp)
-
-                    
-        }
-            
-       
-        // let cityTemp=await inputAsync();
-        // console.log("cityTemp",cityTemp)
-// }
-
-    }    
-    //  let cityTemp=await readlineAsync();
-    //         console.log("cityTemp",cityTemp)
-    // let UpdatedT=await updateTempByName({name:city.name}, {guessTemp:Number(cityTemp)});
-
- 
-
-    //     let cityCompared=await findCityByName({name: city.name});
-    //     if (Math.abs(cityCompared.temperature-cityCompared.guessTemp)<=accuracy){
-    //         let UpdatedScore=await updateTempByName({name:city.name}, {score:1});
-    //         guessRight.push({name:cityCompared.name,actualT:cityCompared.temperature, guessT: cityCompared.guessTemp, deltaT: (cityCompared.temperature-cityCompared.guessTemp)})
-    //     }
-    // }   
-    // return summary.concat(scores,guessRight)
-        return summary
+            let UpdatedT=await updateTempByName({name:city.name}, {guessTemp:Number(cityTemp)});      
+        }      
+            let cityCompared=await findCityByName({name: city.name});
+            if (Math.abs(cityCompared.temperature-cityCompared.guessTemp)<=accuracy){
+                let updatedCity=await updateTempByName({name:city.name}, {score:1});
+                guessRight.push({name:cityCompared.name,actualT:cityCompared.temperature, guessT: cityCompared.guessTemp, deltaT: (cityCompared.temperature-cityCompared.guessTemp)})
+                scores=scores+updatedCity.score;
+            }
+    }            
+        return summary.concat({Scores:scores},guessRight)
 }
-
 
 
 module.exports={weatherOfCity, 

@@ -39,8 +39,8 @@ const readlineAsync=require('readline-async');
 // })
 // .then(console.log);
 
-let output=readlineAsync(5);
-console.log(output)
+let output=readlineAsync()
+console.log(output.then(input=>{return input}))
 
 // const inputAsync=async()=>{
 //     let input=await readlineAsync();

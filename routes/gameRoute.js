@@ -25,7 +25,7 @@ gameRouter.get("/add", async (req, res)=>{
     console.log("get-add City", city)
     let addCityMessage=await addCity(city)
     console.log("Message:",addCityMessage)
-    res.send(`Add ${city} to database`);
+    res.send(`${city} has been added to the game box`);
 }); 
 
 gameRouter.get('/find', async(req, res)=>{
@@ -44,14 +44,20 @@ gameRouter.get('/delete', async(req, res)=>{
     else{res.send(`${city} is deleted from the database.`)}
 })
 
-gameRouter.get('/findcities', async (req,res)=>{
+gameRouter.get('/checkbox', async (req,res)=>{
     let cityArray=await findAllCities();
-    console.log("cityArray:",cityArray)
+    // console.log("cityArray:",cityArray)
     let cities=[];
     for (city of cityArray){
         cities.push(city.name)
     }
     res.send(cities)
+})
+
+gameRouter.get('/findall', async (req,res)=>{
+    let cityArray=await findAllCities();
+    // console.log("cityArray:",cityArray)
+    res.send(cityArray)
 })
 
 gameRouter.get('/update', async(req, res)=>{

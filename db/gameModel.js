@@ -37,14 +37,14 @@ const createCity=async (newCityName)=>{
 
 const findCityByName=async (cityToFind)=>{
     let cityFound=await citySet.findOne(cityToFind)
-    console.log("cityFound return value:", cityFound);
+    // console.log("cityFound return value:", cityFound);
     if (!cityFound){console.log("cannot find"); return false}
     else {return cityFound;}
 }
 
 const deleteByName=async(cityToDelete)=>{
     let cityDeleted=await citySet.deleteOne(cityToDelete);
-    console.log("city to be deleted:", cityDeleted)
+    // console.log("city to be deleted:", cityDeleted)
     return cityDeleted;
 }
 
@@ -55,7 +55,7 @@ const findAll=async ()=>{
 
 const updateTempByName=async(city, cityNewtemperature)=>{
     let cityUpdated=await citySet.findOneAndUpdate(city, cityNewtemperature,{new:true});
-    console.log("cityUpdated", cityUpdated)
+    // console.log("cityUpdated", cityUpdated)
     return cityUpdated;
 }
 
