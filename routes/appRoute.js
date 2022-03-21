@@ -8,4 +8,4 @@ appRouter.get("/weather", localWeather);
 
 appRouter.get("/geoip", geoLocation);
 
-appRouter.get("/q", weatherOfCity); 
+appRouter.get("/weather/q", weatherOfCity); 
